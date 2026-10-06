@@ -14,9 +14,9 @@
     "ws": "^8.18.3"
   },
   "devDependencies": {
-    "@types/node": "^22.19.0",
+    "@types/node": "^26.6.4",
     "@types/ws": "^8.18.1",
-    "esbuild": "^0.25.10",
-    "tsx": "^4.20.6"
+    "esbuild": "^0.28.2",
+    "tsx": "^4.23.15"
   }
 }

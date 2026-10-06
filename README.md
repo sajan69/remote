@@ -6,7 +6,7 @@ No television, air conditioner, or bridge has been lab-verified in this build. A
 
 ## What you need
 
-- Node.js 22 or newer for local development.
+- Node.js 22 or newer for local development. TypeScript 7 is used for type checking.
 - Docker, if you want the one-container install.
 - Home Assistant on the same network for real devices.
 - An infrared transmitter, such as an ESPHome `remote_transmitter` exposed through Home Assistant, for appliances that only understand infrared.
