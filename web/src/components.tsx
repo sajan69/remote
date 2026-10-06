@@ -1,6 +1,10 @@
+import { ArrowLeft, Cable, Settings, TriangleAlert } from 'lucide-react'
 import { useEffect, useRef, type ReactNode } from 'react'
 import type { Capability, CommandRecord, DeviceState } from '@remote/protocol'
 import { powerPlan } from '@remote/protocol'
+import { Badge } from '@/components/ui/badge.tsx'
+import { Button } from '@/components/ui/button.tsx'
+import { cn } from '@/lib/utils.ts'
 import { go } from './router.ts'
 
 export function commandText(command: CommandRecord | null): string {
@@ -21,24 +25,50 @@ export function confidenceLabel(state: DeviceState): string {
   return 'Unknown'
 }
 
-export function Header({ title, back = false, children }: { title: string; back?: boolean; children?: ReactNode }) {
+export function DemoBanner({ children }: { children: ReactNode }) {
   return (
-    <header className="topbar">
+    <div className="grid grid-cols-[auto_1fr] items-start gap-3 rounded-2xl border border-primary/40 bg-primary/10 p-4 text-sm" role="status">
+      <TriangleAlert className="mt-0.5 size-4 text-primary" />
+      <p>{children}</p>
+    </div>
+  )
+}
+
+export function Header({
+  title,
+  back = false,
+  settings = true,
+  children,
+}: {
+  title: string
+  back?: boolean
+  settings?: boolean
+  children?: ReactNode
+}) {
+  return (
+    <header className="flex items-center gap-2">
       {back ? (
-        <button type="button" className="icon-button" onClick={() => go('#/')}>
-          Back
-        </button>
+        <Button type="button" variant="ghost" size="icon" onClick={() => go('#/')} aria-label="Back">
+          <ArrowLeft />
+        </Button>
       ) : (
-        <a className="icon-button" href="#/gateway">
-          Link
-        </a>
+        <Button variant="ghost" size="icon" asChild>
+          <a href="#/gateway" aria-label="Gateway">
+            <Cable />
+          </a>
+        </Button>
       )}
-      <h1>{title}</h1>
-      {children ?? (
-        <a className="icon-button" href="#/settings">
-          Settings
-        </a>
-      )}
+      <h1 className="flex-1 text-center text-lg font-semibold tracking-tight">{title}</h1>
+      {children ??
+        (settings ? (
+          <Button variant="ghost" size="icon" asChild>
+            <a href="#/settings" aria-label="Settings">
+              <Settings />
+            </a>
+          </Button>
+        ) : (
+          <span className="size-12" />
+        ))}
     </header>
   )
 }
@@ -50,6 +80,7 @@ export function HoldButton({
   repeat,
   className,
   shortcut,
+  children,
   onFire,
 }: {
   label: string
@@ -58,6 +89,7 @@ export function HoldButton({
   repeat?: Capability['repeat']
   className?: string
   shortcut?: string
+  children?: ReactNode
   onFire: (isRepeat: boolean) => Promise<void>
 }) {
   const timer = useRef<number | null>(null)
@@ -119,17 +151,20 @@ export function HoldButton({
   }
 
   const aria = reason ? `${label}. Unavailable. ${reason}` : label
+  const classes = cn('h-16 min-w-12 text-base', className)
   if (!repeat) {
     return (
-      <button type="button" className={className} disabled={disabled} aria-label={aria} title={reason} onClick={() => void fire(false)}>
+      <Button type="button" variant="secondary" className={classes} disabled={disabled} aria-label={aria} title={reason} onClick={() => void fire(false)}>
+        {children}
         {label}
-      </button>
+      </Button>
     )
   }
   return (
-    <button
+    <Button
       type="button"
-      className={className}
+      variant="secondary"
+      className={classes}
       disabled={disabled}
       aria-label={aria}
       aria-keyshortcuts={shortcut}
@@ -142,8 +177,9 @@ export function HoldButton({
       onKeyUp={clear}
       onContextMenu={(event) => event.preventDefault()}
     >
+      {children}
       {label}
-    </button>
+    </Button>
   )
 }
 
@@ -159,25 +195,25 @@ export function PowerControls({
   onFire: (capability: string) => Promise<void>
 }) {
   const plan = powerPlan(deviceCapabilities, state)
-  if (plan.mode === 'none') return <p className="small muted">{plan.reason}</p>
+  if (plan.mode === 'none') return <p className="text-sm text-muted-foreground">{plan.reason}</p>
   if (plan.mode === 'discrete-pair') {
     return (
-      <div className="power-pair">
-        <button type="button" className="power" disabled={disabled} onClick={() => void onFire('power_on')}>
+      <div className="grid gap-2">
+        <Button type="button" variant="outline" className="size-16 rounded-full border-2 border-primary p-0 text-sm text-primary" disabled={disabled} onClick={() => void onFire('power_on')}>
           On
-        </button>
-        <button type="button" className="power" disabled={disabled} onClick={() => void onFire('power_off')}>
+        </Button>
+        <Button type="button" variant="outline" className="size-16 rounded-full border-2 border-primary p-0 text-sm text-primary" disabled={disabled} onClick={() => void onFire('power_off')}>
           Off
-        </button>
+        </Button>
       </div>
     )
   }
   return (
-    <div className="stack">
-      <button type="button" className="power" disabled={disabled} onClick={() => void onFire(plan.capability.id)}>
+    <div className="grid gap-2">
+      <Button type="button" variant="outline" className="size-16 rounded-full border-2 border-primary p-0 text-sm text-primary" disabled={disabled} onClick={() => void onFire(plan.capability.id)}>
         {plan.label}
-      </button>
-      {plan.caution ? <p className="small muted">{plan.caution}</p> : null}
+      </Button>
+      {plan.caution ? <p className="max-w-40 text-xs text-muted-foreground">{plan.caution}</p> : null}
     </div>
   )
 }
@@ -186,9 +222,9 @@ export function StatusLine({ state, online, ready }: { state?: DeviceState; onli
   const confidence = state ? confidenceLabel(state) : 'Unknown'
   const tone = !online || !ready ? 'bad' : state?.confidence === 'confirmed' ? 'good' : 'warn'
   return (
-    <div className="spread">
-      <span className={`pill ${online ? 'good' : 'bad'}`}>{online ? 'Gateway connected' : 'Gateway disconnected'}</span>
-      <span className={`pill ${tone}`}>{ready ? confidence : 'Controls paused'}</span>
+    <div className="flex items-center justify-between gap-2">
+      <Badge variant={online ? 'good' : 'bad'}>{online ? 'Gateway connected' : 'Gateway disconnected'}</Badge>
+      <Badge variant={tone}>{ready ? confidence : 'Controls paused'}</Badge>
     </div>
   )
 }

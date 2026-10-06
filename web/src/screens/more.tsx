@@ -1,4 +1,12 @@
 import { useEffect, useState } from 'react'
+import { Activity, Download, LogOut, Radio } from 'lucide-react'
+import { Button } from '@/components/ui/button.tsx'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.tsx'
+import { Input } from '@/components/ui/input.tsx'
+import { Label } from '@/components/ui/label.tsx'
+import { Select } from '@/components/ui/select.tsx'
+import { Separator } from '@/components/ui/separator.tsx'
+import { Switch } from '@/components/ui/switch.tsx'
 import { api, ApiError } from '../api.ts'
 import { Header } from '../components.tsx'
 import { useRoute } from '../router.ts'
@@ -18,37 +26,40 @@ function Settings() {
   const [message, setMessage] = useState<string | null>(null)
 
   return (
-    <main className="stack loose">
-      <Header title="Settings" back>
-        <span className="icon-button" aria-hidden="true" />
-      </Header>
-      <label className="field">
-        Theme
-        <select
+    <main className="grid gap-5">
+      <Header title="Settings" back settings={false} />
+      <div className="grid gap-2">
+        <Label htmlFor="theme">Theme</Label>
+        <Select
+          id="theme"
           value={gateway.prefs.theme}
           onChange={(event) => void gateway.setPrefs({ theme: event.target.value as 'system' | 'light' | 'dark' })}
         >
           <option value="system">Match this phone</option>
           <option value="dark">Dark</option>
           <option value="light">Light</option>
-        </select>
-      </label>
-      <label className="row">
-        <input
-          type="checkbox"
-          checked={gateway.prefs.vibrate}
-          onChange={(event) => void gateway.setPrefs({ vibrate: event.target.checked })}
-        />
+        </Select>
+      </div>
+      <Label className="flex min-h-11 items-center justify-between gap-3">
         Vibrate on press when the phone allows it
-      </label>
-      <a className="choice" href="#/gateway">
-        Gateway and Home Assistant
-      </a>
-      <a className="choice" href="#/diagnostics">
-        Diagnostics
-      </a>
-      <button
+        <Switch checked={gateway.prefs.vibrate} onCheckedChange={(checked) => void gateway.setPrefs({ vibrate: checked })} />
+      </Label>
+      <Separator />
+      <Button variant="outline" asChild>
+        <a href="#/gateway">
+          <Radio />
+          Gateway and Home Assistant
+        </a>
+      </Button>
+      <Button variant="outline" asChild>
+        <a href="#/diagnostics">
+          <Activity />
+          Diagnostics
+        </a>
+      </Button>
+      <Button
         type="button"
+        variant="secondary"
         onClick={() => {
           void api.exportConfig().then((config) => {
             const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' })
@@ -61,14 +72,16 @@ function Settings() {
           })
         }}
       >
+        <Download />
         Export configuration
-      </button>
-      <p className="small muted">Exports omit pairing codes and Home Assistant tokens.</p>
-      <button type="button" onClick={() => void gateway.signOut()}>
+      </Button>
+      <p className="text-sm text-muted-foreground">Exports omit pairing codes and Home Assistant tokens.</p>
+      <Button type="button" variant="outline" onClick={() => void gateway.signOut()}>
+        <LogOut />
         Sign out of this phone
-      </button>
+      </Button>
       <form
-        className="stack"
+        className="grid gap-3"
         onSubmit={(event) => {
           event.preventDefault()
           void api
@@ -77,20 +90,22 @@ function Settings() {
             .catch((reason: unknown) => setMessage(reason instanceof ApiError ? reason.message : 'Reset failed.'))
         }}
       >
-        <label className="field">
-          Reset the gateway
-          <input value={confirm} onChange={(event) => setConfirm(event.target.value)} placeholder="reset local gateway" />
-        </label>
-        <button type="submit">Reset local data</button>
+        <div className="grid gap-2">
+          <Label htmlFor="reset-phrase">Reset the gateway</Label>
+          <Input id="reset-phrase" value={confirm} onChange={(event) => setConfirm(event.target.value)} placeholder="reset local gateway" />
+        </div>
+        <Button type="submit" variant="destructive">Reset local data</Button>
       </form>
-      <section className="note stack">
-        <h2>About this build</h2>
-        <p className="small">
-          One lightweight remote for your supported devices, with clear setup for the hardware or integration each device needs.
-          No model has been lab-verified in this build. A control is shown only when an integration advertises it, and a one-way
-          infrared send is never described as a confirmed appliance response.
-        </p>
-      </section>
+      <Card>
+        <CardHeader>
+          <CardTitle>About this build</CardTitle>
+          <CardDescription>
+            One lightweight remote for your supported devices, with clear setup for the hardware or integration each device needs.
+            No model has been lab-verified in this build. A control is shown only when an integration advertises it, and a one-way
+            infrared send is never described as a confirmed appliance response.
+          </CardDescription>
+        </CardHeader>
+      </Card>
       {message ? <p role="status">{message}</p> : null}
     </main>
   )
@@ -104,21 +119,19 @@ function GatewayPage() {
   }, [])
 
   return (
-    <main className="stack loose">
+    <main className="grid gap-5">
       <Header title="Gateway" back />
-      <section className="note stack">
-        <h2>Home Assistant</h2>
-        <p>{message}</p>
-        <p className="small muted">
-          Set HA_BASE_URL and HA_TOKEN in the gateway environment, then restart it. The token stays on the gateway and is not
-          entered in the browser.
-        </p>
-        <p className="small muted">
-          Raw infrared frames also need IR_RAW_DOMAIN, IR_RAW_SERVICE, and IR_RAW_ENTITY_ID pointing at a service you created
-          for your bridge. Named remote commands use a Home Assistant remote entity instead.
-        </p>
-      </section>
-      <button
+      <Card>
+        <CardHeader>
+          <CardTitle>Home Assistant</CardTitle>
+          <CardDescription>{message}</CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-3 text-sm text-muted-foreground">
+          <p>Set HA_BASE_URL and HA_TOKEN in the gateway environment, then restart it. The token stays on the gateway and is not entered in the browser.</p>
+          <p>Raw infrared frames also need IR_RAW_DOMAIN, IR_RAW_SERVICE, and IR_RAW_ENTITY_ID pointing at a service you created for your bridge. Named remote commands use a Home Assistant remote entity instead.</p>
+        </CardContent>
+      </Card>
+      <Button
         type="button"
         onClick={() => {
           void api
@@ -130,10 +143,10 @@ function GatewayPage() {
         }}
       >
         {gateway.demoEnabled ? 'Remove demo devices' : 'Add labelled demo devices'}
-      </button>
-      <button type="button" onClick={() => void api.revokeAll().then(() => gateway.reload())}>
+      </Button>
+      <Button type="button" variant="outline" onClick={() => void api.revokeAll().then(() => gateway.reload())}>
         Sign out every phone ({gateway.status?.sessions ?? 0})
-      </button>
+      </Button>
     </main>
   )
 }
@@ -144,14 +157,16 @@ function Diagnostics() {
     void api.diagnostics().then((result) => setEntries(result.entries)).catch(() => undefined)
   }, [])
   return (
-    <main className="stack loose">
+    <main className="grid gap-4">
       <Header title="Diagnostics" back />
-      {entries.length === 0 ? <p className="muted">No gateway notes yet.</p> : null}
+      {entries.length === 0 ? <p className="text-muted-foreground">No gateway notes yet.</p> : null}
       {entries.slice().reverse().map((entry) => (
-        <article key={entry.id} className="note">
-          <p className="small muted">{new Date(entry.at).toLocaleString()}</p>
-          <p>{entry.message}</p>
-        </article>
+        <Card key={entry.id}>
+          <CardHeader>
+            <CardDescription>{new Date(entry.at).toLocaleString()}</CardDescription>
+            <CardTitle className="text-base font-normal">{entry.message}</CardTitle>
+          </CardHeader>
+        </Card>
       ))}
     </main>
   )
@@ -165,10 +180,10 @@ function Learn({ id }: { id: string }) {
   const [message, setMessage] = useState<string | null>(null)
   const [testId, setTestId] = useState<string | null>(null)
 
-  if (!device) return <main className="stack"><Header title="Learn" back /><p>That remote is gone.</p></main>
+  if (!device) return <main className="grid gap-4"><Header title="Learn" back /><p>That remote is gone.</p></main>
   if (device.category === 'ac' || !device.learnSupported) {
     return (
-      <main className="stack">
+      <main className="grid gap-4">
         <Header title="Learn" back />
         <p>Button learning needs a bridge that supports it. Air-conditioner state is not learned one temperature at a time.</p>
       </main>
@@ -176,18 +191,18 @@ function Learn({ id }: { id: string }) {
   }
 
   return (
-    <main className="stack loose">
+    <main className="grid gap-4">
       <Header title="Learn a button" back />
-      <p className="small muted">Press the original remote once when Home Assistant asks. This app does not keep a copy of the infrared timings; the bridge stores the command.</p>
-      <label className="field">
-        Button
-        <input value={capability} onChange={(event) => setCapability(event.target.value)} />
-      </label>
-      <label className="field">
-        Bridge command name
-        <input value={commandName} onChange={(event) => setCommandName(event.target.value)} />
-      </label>
-      <button
+      <p className="text-sm text-muted-foreground">Press the original remote once when Home Assistant asks. This app does not keep a copy of the infrared timings; the bridge stores the command.</p>
+      <div className="grid gap-2">
+        <Label htmlFor="learn-button">Button</Label>
+        <Input id="learn-button" value={capability} onChange={(event) => setCapability(event.target.value)} />
+      </div>
+      <div className="grid gap-2">
+        <Label htmlFor="learn-command">Bridge command name</Label>
+        <Input id="learn-command" value={commandName} onChange={(event) => setCommandName(event.target.value)} />
+      </div>
+      <Button
         type="button"
         onClick={() => {
           setMessage('Waiting for the original remote…')
@@ -198,9 +213,10 @@ function Learn({ id }: { id: string }) {
         }}
       >
         Learn
-      </button>
-      <button
+      </Button>
+      <Button
         type="button"
+        variant="outline"
         onClick={() => {
           void gateway
             .sendCommand(device, capability, {})
@@ -212,8 +228,8 @@ function Learn({ id }: { id: string }) {
         }}
       >
         Send one test
-      </button>
-      <button
+      </Button>
+      <Button
         type="button"
         disabled={!testId}
         onClick={() => {
@@ -224,7 +240,7 @@ function Learn({ id }: { id: string }) {
         }}
       >
         It worked — save
-      </button>
+      </Button>
       {message ? <p role="status">{message}</p> : null}
     </main>
   )

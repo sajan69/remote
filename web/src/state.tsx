@@ -57,10 +57,10 @@ export function GatewayProvider({ children }: { children: ReactNode }) {
   prefsRef.current = prefs
 
   const applyTheme = useCallback((theme: Prefs['theme']) => {
-    if (theme === 'system') delete document.documentElement.dataset.theme
-    else document.documentElement.dataset.theme = theme
+    const dark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)
+    document.documentElement.classList.toggle('dark', dark)
     const color = document.querySelector('meta[name="theme-color"]')
-    color?.setAttribute('content', theme === 'light' ? '#f3eee6' : '#12100e')
+    color?.setAttribute('content', dark ? '#12100e' : '#f7f3ec')
   }, [])
 
   const remember = useCallback((id: string) => {
@@ -135,6 +135,14 @@ export function GatewayProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     void reload()
   }, [reload])
+
+  useEffect(() => {
+    if (prefs.theme !== 'system') return
+    const media = window.matchMedia('(prefers-color-scheme: dark)')
+    const onChange = () => applyTheme('system')
+    media.addEventListener('change', onChange)
+    return () => media.removeEventListener('change', onChange)
+  }, [applyTheme, prefs.theme])
 
   useEffect(() => {
     if (phase !== 'ready') return
