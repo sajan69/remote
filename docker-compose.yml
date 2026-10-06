@@ -1,0 +1,16 @@
+services:
+  remote:
+    build: .
+    ports:
+      - "8787:8787"
+    environment:
+      COOKIE_SECURE: "false"
+      PUBLIC_ORIGINS: "http://localhost:8787"
+      HA_BASE_URL: ""
+      HA_TOKEN: ""
+    volumes:
+      - remote-data:/data
+    restart: unless-stopped
+
+volumes:
+  remote-data:

@@ -1,0 +1,15 @@
+{
+  "name": "Example named-command profile",
+  "category": "tv",
+  "status": "experimental",
+  "provenance": "Written for this project as an empty example. It is not a brand code database.",
+  "licence": "MIT",
+  "protocol": "ha_remote",
+  "version": 1,
+  "commands": {
+    "power_on": { "command": "power_on" },
+    "volume_up": { "command": "volume_up" },
+    "volume_down": { "command": "volume_down" }
+  },
+  "testedCapabilities": []
+}
