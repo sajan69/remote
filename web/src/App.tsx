@@ -8,7 +8,7 @@ import { useRoute } from './router.ts'
 import { GatewayProvider, useGateway } from './state.tsx'
 
 const Setup = lazy(() => import('./screens/setup.tsx'))
-const RemoteScreen = lazy(() => import('./screens/remotes.tsx'))
+const RemoteScreen = lazy(() => import('./screens/remotes/index.tsx'))
 const More = lazy(() => import('./screens/more.tsx'))
 
 export default function App() {
