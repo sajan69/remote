@@ -7,6 +7,7 @@ import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/ca
 import { Input } from '@/components/ui/input.tsx'
 import { Label } from '@/components/ui/label.tsx'
 import { Switch } from '@/components/ui/switch.tsx'
+import { argumentsFor } from '@/lib/capabilities.ts'
 import { api, ApiError, type DiscoveryEntity } from '../api.ts'
 import { commandText, Header } from '../components.tsx'
 import { go } from '../router.ts'
@@ -244,20 +245,4 @@ export default function Setup() {
       {error ? <p className="text-sm text-destructive" role="alert">{error}</p> : null}
     </main>
   )
-}
-
-function argumentsFor(capability: DiscoveryEntity['capabilities'][number]): Record<string, unknown> {
-  if (capability.kind === 'toggle') return { value: true }
-  if (capability.kind === 'range') return { value: capability.range?.min ?? 1 }
-  if (capability.kind === 'enum') return { value: capability.enumValues?.[0] ?? '' }
-  if (capability.kind === 'state') {
-    const args: Record<string, unknown> = {}
-    for (const field of capability.stateFields ?? []) {
-      if (field.kind === 'boolean') args[field.id] = true
-      if (field.kind === 'number') args[field.id] = field.min ?? 0
-      if (field.kind === 'enum') args[field.id] = field.values?.[0]
-    }
-    return args
-  }
-  return {}
 }
