@@ -1,8 +1,14 @@
-import { labelFor, repeatFor, type Capability, type ConfirmationMode, type Profile } from '@remote/protocol'
+import {
+  labelFor,
+  repeatFor,
+  type Capability,
+  type ConfirmationMode,
+  type Profile,
+} from '@remote/protocol';
 
 export function capabilitiesForProfile(profile: Profile): Capability[] {
   if (profile.protocol === 'ac_state_v1' && profile.ac) {
-    const limits = profile.ac
+    const limits = profile.ac;
     return [
       {
         id: 'climate.set',
@@ -27,30 +33,34 @@ export function capabilitiesForProfile(profile: Profile): Capability[] {
           { id: 'swing', label: 'Swing', kind: 'enum', values: limits.swings },
         ],
       },
-    ]
+    ];
   }
 
   return Object.keys(profile.commands).map((id) => {
-    const repeat = repeatFor(id, profile.protocol === 'nec' ? 'protocol_repeat' : 'resend_frame')
+    const repeat = repeatFor(id, profile.protocol === 'nec' ? 'protocol_repeat' : 'resend_frame');
     return {
       id,
       label: labelFor(id),
       kind: 'discrete' as const,
-      confirmation: 'transmission_only' as ConfirmationMode,
+      confirmation: 'transmission_only',
       idempotent: false,
       available: true,
       ...(repeat ? { repeat } : {}),
-    }
-  })
+    };
+  });
 }
 
-export function mergeCapabilities(base: Capability[], profile: Profile | null, confirmation: ConfirmationMode): Capability[] {
-  const capabilities = base.map((capability) => ({ ...capability, confirmation }))
-  if (!profile) return capabilities
+export function mergeCapabilities(
+  base: Capability[],
+  profile: Profile | null,
+  confirmation: ConfirmationMode,
+): Capability[] {
+  const capabilities = base.map((capability) => ({ ...capability, confirmation }));
+  if (!profile) return capabilities;
   for (const capability of capabilitiesForProfile(profile)) {
-    const index = capabilities.findIndex((item) => item.id === capability.id)
-    if (index >= 0) capabilities[index] = capability
-    else capabilities.push(capability)
+    const index = capabilities.findIndex((item) => item.id === capability.id);
+    if (index >= 0) capabilities[index] = capability;
+    else capabilities.push(capability);
   }
-  return capabilities
+  return capabilities;
 }
