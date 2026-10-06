@@ -6,7 +6,7 @@ No television, air conditioner, or bridge has been lab-verified in this build. A
 
 ## What you need
 
-- Node.js 22 or newer for local development. TypeScript 7 is used for type checking.
+- Node.js 22 or newer for local development. `npm run check` uses TypeScript 7. ESLint uses the TypeScript 6 compiler API, because TypeScript 7 does not ship one yet.
 - Docker, if you want the one-container install.
 - Home Assistant on the same network for real devices.
 - An infrared transmitter, such as an ESPHome `remote_transmitter` exposed through Home Assistant, for appliances that only understand infrared.
@@ -69,9 +69,9 @@ Gateway settings can add Demo TV, Demo air conditioner, and Demo fan. A banner s
 
 ## Compatibility
 
-| Model | Bridge | Browser | Result |
-|---|---|---|---|
-| None yet | — | — | No lab-verified model in this build |
+| Model    | Bridge | Browser | Result                              |
+| -------- | ------ | ------- | ----------------------------------- |
+| None yet | —      | —       | No lab-verified model in this build |
 
 Record the exact television, air conditioner, bridge firmware, browser versions, and which commands passed before calling a model supported.
 

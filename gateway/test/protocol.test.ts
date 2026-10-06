@@ -1,19 +1,25 @@
-import assert from 'node:assert/strict'
-import test from 'node:test'
-import { decodeAcStateV1, encodeAcStateV1, encodeNec, encodeNecRepeat, parseProfile, powerPlan } from '@remote/protocol'
-import type { Capability, DeviceState } from '@remote/protocol'
+import { expect, test } from '@jest/globals';
+import {
+  decodeAcStateV1,
+  encodeAcStateV1,
+  encodeNec,
+  encodeNecRepeat,
+  parseProfile,
+  powerPlan,
+} from '@remote/protocol';
+import type { Capability, DeviceState } from '@remote/protocol';
 
 test('NEC frame uses the header, inverted bytes, and a trailing mark', () => {
-  const timings = encodeNec(0x00, 0x00)
-  assert.deepEqual(timings.slice(0, 2), [9000, 4500])
-  assert.equal(timings.at(-1), 560)
-  assert.equal(timings.length, 67)
-  const spaces = timings.filter((_, index) => index > 2 && index % 2 === 1)
-  assert.deepEqual(spaces.slice(0, 8), Array(8).fill(560))
-  assert.deepEqual(spaces.slice(8, 16), Array(8).fill(1690))
-  assert.deepEqual(encodeNecRepeat(), [9000, 2250, 560])
-  assert.throws(() => encodeNec(256, 1))
-})
+  const timings = encodeNec(0x00, 0x00);
+  expect(timings.slice(0, 2)).toEqual([9000, 4500]);
+  expect(timings.at(-1)).toBe(560);
+  expect(timings.length).toBe(67);
+  const spaces = timings.filter((_, index) => index > 2 && index % 2 === 1);
+  expect(spaces.slice(0, 8)).toEqual(Array(8).fill(560));
+  expect(spaces.slice(8, 16)).toEqual(Array(8).fill(1690));
+  expect(encodeNecRepeat()).toEqual([9000, 2250, 560]);
+  expect(() => encodeNec(256, 1)).toThrow();
+});
 
 test('air-conditioner frames round-trip and reject illegal combinations', () => {
   const limits = {
@@ -23,23 +29,30 @@ test('air-conditioner frames round-trip and reject illegal combinations', () => 
     modes: ['cool', 'heat'],
     fans: ['auto', 'low'],
     swings: ['off', 'vertical'],
-  }
-  const frame = encodeAcStateV1({ power: true, mode: 'cool', celsius: 24, fan: 'low', swing: 'vertical' }, limits)
-  assert.equal(frame.bytes[7], frame.bytes.slice(0, 7).reduce((sum, byte) => sum ^ byte, 0))
-  assert.deepEqual(decodeAcStateV1(frame.bytes), {
+  };
+  const frame = encodeAcStateV1(
+    { power: true, mode: 'cool', celsius: 24, fan: 'low', swing: 'vertical' },
+    limits,
+  );
+  expect(frame.bytes[7]).toBe(frame.bytes.slice(0, 7).reduce((sum, byte) => sum ^ byte, 0));
+  expect(decodeAcStateV1(frame.bytes)).toEqual({
     power: true,
     mode: 'cool',
     celsius: 24,
     fan: 'low',
     swing: 'vertical',
-  })
-  assert.equal(frame.timingsUs[0], 3400)
-  assert.throws(() => encodeAcStateV1({ power: true, mode: 'dry', celsius: 24, fan: 'low', swing: 'off' }, limits))
-  assert.throws(() => encodeAcStateV1({ power: true, mode: 'cool', celsius: 31, fan: 'low', swing: 'off' }, limits))
-  const broken = [...frame.bytes]
-  broken[7] = 0
-  assert.throws(() => decodeAcStateV1(broken))
-})
+  });
+  expect(frame.timingsUs[0]).toBe(3400);
+  expect(() =>
+    encodeAcStateV1({ power: true, mode: 'dry', celsius: 24, fan: 'low', swing: 'off' }, limits),
+  ).toThrow();
+  expect(() =>
+    encodeAcStateV1({ power: true, mode: 'cool', celsius: 31, fan: 'low', swing: 'off' }, limits),
+  ).toThrow();
+  const broken = [...frame.bytes];
+  broken[7] = 0;
+  expect(() => decodeAcStateV1(broken)).toThrow();
+});
 
 test('imported profiles cannot claim confirmation and must name a licence', () => {
   const profile = parseProfile(
@@ -54,9 +67,9 @@ test('imported profiles cannot claim confirmation and must name a licence', () =
       commands: { volume_up: { command: 'volume_up' } },
     },
     { id: 'profile_test_1', forceExperimental: true },
-  )
-  assert.equal(profile.status, 'experimental')
-  assert.throws(() =>
+  );
+  expect(profile.status).toBe('experimental');
+  expect(() =>
     parseProfile({
       name: 'Missing licence',
       category: 'tv',
@@ -66,8 +79,8 @@ test('imported profiles cannot claim confirmation and must name a licence', () =
       version: 1,
       commands: {},
     }),
-  )
-})
+  ).toThrow();
+});
 
 test('unknown power is not presented as a single toggle when on and off both exist', () => {
   const on: Capability = {
@@ -77,18 +90,17 @@ test('unknown power is not presented as a single toggle when on and off both exi
     confirmation: 'transmission_only',
     idempotent: false,
     available: true,
-  }
-  const off = { ...on, id: 'power_off', label: 'Off' }
+  };
+  const off = { ...on, id: 'power_off', label: 'Off' };
   const unknown: DeviceState = {
     values: {},
     source: 'none',
     confidence: 'unknown',
     observedAt: null,
     lastCommandId: null,
-  }
-  assert.equal(powerPlan([on, off], unknown).mode, 'discrete-pair')
-  assert.equal(
+  };
+  expect(powerPlan([on, off], unknown).mode).toBe('discrete-pair');
+  expect(
     powerPlan([on, off], { ...unknown, values: { power: true }, confidence: 'confirmed' }).mode,
-    'single',
-  )
-})
+  ).toBe('single');
+});
