@@ -1,8 +1,13 @@
-import crypto from 'node:crypto'
-import { redact } from '../redact.ts'
-import type { Store } from '../store.ts'
+import crypto from 'node:crypto';
+import { redact } from '../redact.ts';
+import type { Store } from '../store.ts';
 
-export function recordDiagnostic(store: Store, code: string, message: string, deviceId?: string): void {
+export function recordDiagnostic(
+  store: Store,
+  code: string,
+  message: string,
+  deviceId?: string,
+): void {
   store.mutate((data) => {
     data.diagnostics.push({
       id: crypto.randomUUID(),
@@ -10,7 +15,7 @@ export function recordDiagnostic(store: Store, code: string, message: string, de
       code,
       message: redact(message),
       ...(deviceId ? { deviceId } : {}),
-    })
-    if (data.diagnostics.length > 200) data.diagnostics.splice(0, data.diagnostics.length - 200)
-  })
+    });
+    if (data.diagnostics.length > 200) data.diagnostics.splice(0, data.diagnostics.length - 200);
+  });
 }

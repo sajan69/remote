@@ -28,17 +28,17 @@ The recommended first release is therefore a PWA plus a local gateway, with Home
 
 These are acceptance targets to measure during implementation, not current results.
 
-| Goal | Target |
-|---|---|
-| Lightweight initial load | Initial route JavaScript ≤150 KB gzip; complete initial app assets ≤300 KB gzip, excluding optional adapter/profile downloads |
-| Fast cached startup | Usable remote within 1 second on the declared reference mid-range phone |
-| Immediate interaction feedback | Visual press feedback within 100 ms |
-| Command responsiveness | Gateway acknowledgement p95 ≤300 ms on the reference LAN; separately measure physical appliance response |
-| Transport reliability | ≥99% gateway acknowledgements over 500 commands per supported adapter on a stable reference LAN |
-| Physical operation | ≥98% observed intended responses in a documented 100-command test per supported model, with IR placement recorded |
-| Easy access | Last-used remote available within two taps from launch |
-| Easy deployment | Static frontend build plus one documented gateway container; no required external database |
-| Accessibility | WCAG 2.2 AA target; primary touch targets ≥44×44 CSS px |
+| Goal                           | Target                                                                                                                        |
+| ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- |
+| Lightweight initial load       | Initial route JavaScript ≤150 KB gzip; complete initial app assets ≤300 KB gzip, excluding optional adapter/profile downloads |
+| Fast cached startup            | Usable remote within 1 second on the declared reference mid-range phone                                                       |
+| Immediate interaction feedback | Visual press feedback within 100 ms                                                                                           |
+| Command responsiveness         | Gateway acknowledgement p95 ≤300 ms on the reference LAN; separately measure physical appliance response                      |
+| Transport reliability          | ≥99% gateway acknowledgements over 500 commands per supported adapter on a stable reference LAN                               |
+| Physical operation             | ≥98% observed intended responses in a documented 100-command test per supported model, with IR placement recorded             |
+| Easy access                    | Last-used remote available within two taps from launch                                                                        |
+| Easy deployment                | Static frontend build plus one documented gateway container; no required external database                                    |
+| Accessibility                  | WCAG 2.2 AA target; primary touch targets ≥44×44 CSS px                                                                       |
 
 ## 5. Release scope
 
@@ -157,23 +157,23 @@ Cache versioned shell assets and public profiles; never cache pairing/session re
 
 ## 10. Acceptance tests and release gates
 
-| Scenario | Required result |
-|---|---|
-| Real TV buttons | Advertised commands visibly operate the tested TV; command evidence is recorded |
-| Held volume/navigation | Correct repeat behaviour; stops on release, cancellation, tab hiding, and disconnect |
-| AC settings | Supported mode/temperature/fan/swing combinations encode correctly and operate the test AC |
-| Original remote changes appliance | Feedback reconciles where available; otherwise UI preserves assumed/unknown state |
-| One-way IR | UI reports transmission without claiming observed appliance state |
-| Bridge unplugged | Controls cannot report success; clear recovery path appears |
-| Ambiguous toggle timeout | No automatic retry or delayed replay occurs |
-| Rapid commands | Per-device order preserved; AC taps coalesced; duplicates suppressed |
-| Internet disconnected | Cached app loads and local control works when LAN/gateway remain reachable |
-| Phone network lost | No stale command queue executes when connectivity returns |
-| Profile import | Invalid data rejected; valid profile can be tested before activation |
-| Permissions/browser limitations | Explicit guidance or supported gateway fallback; no fake connection |
-| Deployment | New machine can deploy from README and pass health/pairing/control smoke test |
-| Security | Unpaired clients rejected; tokens excluded from exports/logs; disallowed origins/endpoints rejected |
-| Performance/accessibility | Bundle budgets and reference-device targets met; keyboard/screen-reader checks pass |
+| Scenario                          | Required result                                                                                     |
+| --------------------------------- | --------------------------------------------------------------------------------------------------- |
+| Real TV buttons                   | Advertised commands visibly operate the tested TV; command evidence is recorded                     |
+| Held volume/navigation            | Correct repeat behaviour; stops on release, cancellation, tab hiding, and disconnect                |
+| AC settings                       | Supported mode/temperature/fan/swing combinations encode correctly and operate the test AC          |
+| Original remote changes appliance | Feedback reconciles where available; otherwise UI preserves assumed/unknown state                   |
+| One-way IR                        | UI reports transmission without claiming observed appliance state                                   |
+| Bridge unplugged                  | Controls cannot report success; clear recovery path appears                                         |
+| Ambiguous toggle timeout          | No automatic retry or delayed replay occurs                                                         |
+| Rapid commands                    | Per-device order preserved; AC taps coalesced; duplicates suppressed                                |
+| Internet disconnected             | Cached app loads and local control works when LAN/gateway remain reachable                          |
+| Phone network lost                | No stale command queue executes when connectivity returns                                           |
+| Profile import                    | Invalid data rejected; valid profile can be tested before activation                                |
+| Permissions/browser limitations   | Explicit guidance or supported gateway fallback; no fake connection                                 |
+| Deployment                        | New machine can deploy from README and pass health/pairing/control smoke test                       |
+| Security                          | Unpaired clients rejected; tokens excluded from exports/logs; disallowed origins/endpoints rejected |
+| Performance/accessibility         | Bundle budgets and reference-device targets met; keyboard/screen-reader checks pass                 |
 
 Browser matrix: current stable Chrome on Android, Safari on iOS, and desktop Chrome, Safari, Firefox, and Edge, with exact tested versions recorded. Verify installed and browser modes independently on mobile. Core gateway control must not depend on Web Bluetooth, WebUSB, or Web Serial support. Test pairing persistence, background/foreground return, gateway restart, and state refresh across two clients.
 

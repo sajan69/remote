@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -86,7 +86,7 @@
   body {
     @apply bg-background text-foreground antialiased;
     margin: 0;
-    font-family: "Segoe UI", "Avenir Next", "Helvetica Neue", sans-serif;
+    font-family: 'Segoe UI', 'Avenir Next', 'Helvetica Neue', sans-serif;
   }
 
   button,

@@ -1,5 +1,5 @@
-import type { ComponentProps } from 'react'
-import { cn } from '@/lib/utils.ts'
+import type { ComponentProps } from 'react';
+import { cn } from '@/lib/utils.ts';
 
 function Input({ className, type, ...props }: ComponentProps<'input'>) {
   return (
@@ -12,7 +12,7 @@ function Input({ className, type, ...props }: ComponentProps<'input'>) {
       )}
       {...props}
     />
-  )
+  );
 }
 
-export { Input }
+export { Input };

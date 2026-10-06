@@ -1,18 +1,18 @@
-import * as Dialog from '@radix-ui/react-dialog'
-import { X } from 'lucide-react'
-import type { ComponentProps } from 'react'
-import { cn } from '@/lib/utils.ts'
+import * as Dialog from '@radix-ui/react-dialog';
+import { X } from 'lucide-react';
+import type { ComponentProps } from 'react';
+import { cn } from '@/lib/utils.ts';
 
 function Sheet(props: ComponentProps<typeof Dialog.Root>) {
-  return <Dialog.Root data-slot="sheet" {...props} />
+  return <Dialog.Root data-slot="sheet" {...props} />;
 }
 
 function SheetTrigger(props: ComponentProps<typeof Dialog.Trigger>) {
-  return <Dialog.Trigger data-slot="sheet-trigger" {...props} />
+  return <Dialog.Trigger data-slot="sheet-trigger" {...props} />;
 }
 
 function SheetClose(props: ComponentProps<typeof Dialog.Close>) {
-  return <Dialog.Close data-slot="sheet-close" {...props} />
+  return <Dialog.Close data-slot="sheet-close" {...props} />;
 }
 
 function SheetContent({ className, children, ...props }: ComponentProps<typeof Dialog.Content>) {
@@ -28,24 +28,39 @@ function SheetContent({ className, children, ...props }: ComponentProps<typeof D
         {...props}
       >
         {children}
-        <Dialog.Close className="absolute top-4 right-4 inline-flex size-10 items-center justify-center rounded-full hover:bg-accent" aria-label="Close">
+        <Dialog.Close
+          className="absolute top-4 right-4 inline-flex size-10 items-center justify-center rounded-full hover:bg-accent"
+          aria-label="Close"
+        >
           <X className="size-4" />
         </Dialog.Close>
       </Dialog.Content>
     </Dialog.Portal>
-  )
+  );
 }
 
 function SheetHeader({ className, ...props }: ComponentProps<'div'>) {
-  return <div data-slot="sheet-header" className={cn('grid gap-1 pr-10', className)} {...props} />
+  return <div data-slot="sheet-header" className={cn('grid gap-1 pr-10', className)} {...props} />;
 }
 
 function SheetTitle({ className, ...props }: ComponentProps<typeof Dialog.Title>) {
-  return <Dialog.Title data-slot="sheet-title" className={cn('text-lg font-semibold', className)} {...props} />
+  return (
+    <Dialog.Title
+      data-slot="sheet-title"
+      className={cn('text-lg font-semibold', className)}
+      {...props}
+    />
+  );
 }
 
 function SheetDescription({ className, ...props }: ComponentProps<typeof Dialog.Description>) {
-  return <Dialog.Description data-slot="sheet-description" className={cn('text-sm text-muted-foreground', className)} {...props} />
+  return (
+    <Dialog.Description
+      data-slot="sheet-description"
+      className={cn('text-sm text-muted-foreground', className)}
+      {...props}
+    />
+  );
 }
 
-export { Sheet, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger }
+export { Sheet, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger };

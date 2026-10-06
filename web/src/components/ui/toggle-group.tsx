@@ -1,12 +1,21 @@
-import * as ToggleGroupPrimitive from '@radix-ui/react-toggle-group'
-import type { ComponentProps } from 'react'
-import { cn } from '@/lib/utils.ts'
+import * as ToggleGroupPrimitive from '@radix-ui/react-toggle-group';
+import type { ComponentProps } from 'react';
+import { cn } from '@/lib/utils.ts';
 
 function ToggleGroup({ className, ...props }: ComponentProps<typeof ToggleGroupPrimitive.Root>) {
-  return <ToggleGroupPrimitive.Root data-slot="toggle-group" className={cn('flex flex-wrap gap-2', className)} {...props} />
+  return (
+    <ToggleGroupPrimitive.Root
+      data-slot="toggle-group"
+      className={cn('flex flex-wrap gap-2', className)}
+      {...props}
+    />
+  );
 }
 
-function ToggleGroupItem({ className, ...props }: ComponentProps<typeof ToggleGroupPrimitive.Item>) {
+function ToggleGroupItem({
+  className,
+  ...props
+}: ComponentProps<typeof ToggleGroupPrimitive.Item>) {
   return (
     <ToggleGroupPrimitive.Item
       data-slot="toggle-group-item"
@@ -16,7 +25,7 @@ function ToggleGroupItem({ className, ...props }: ComponentProps<typeof ToggleGr
       )}
       {...props}
     />
-  )
+  );
 }
 
-export { ToggleGroup, ToggleGroupItem }
+export { ToggleGroup, ToggleGroupItem };

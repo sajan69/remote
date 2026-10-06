@@ -4,7 +4,7 @@ export class HttpError extends Error {
     readonly code: string,
     message: string,
   ) {
-    super(message)
+    super(message);
   }
 }
 
@@ -14,6 +14,6 @@ export class AdapterError extends Error {
     readonly code: string,
     readonly ambiguous: boolean,
   ) {
-    super(message)
+    super(message);
   }
 }
