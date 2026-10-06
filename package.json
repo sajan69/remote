@@ -1,0 +1,26 @@
+{
+  "name": "universal-remote",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Lightweight universal remote PWA and local gateway.",
+  "engines": {
+    "node": ">=22.9.0"
+  },
+  "scripts": {
+    "dev": "concurrently -n gateway,web -c yellow,cyan \"npm run dev -w gateway\" \"npm run dev -w web\"",
+    "build": "npm run build -w web && npm run build -w gateway",
+    "check": "tsc -p packages/protocol --noEmit && tsc -p gateway --noEmit && tsc -p web --noEmit",
+    "test": "npm run test -w gateway",
+    "start": "npm run start -w gateway",
+    "icons": "node scripts/generate-icons.mjs"
+  },
+  "workspaces": [
+    "packages/protocol",
+    "gateway",
+    "web"
+  ],
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "typescript": "^5.9.3"
+  }
+}
