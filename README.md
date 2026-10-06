@@ -1,6 +1,6 @@
 # Remote
 
-A mobile-first remote for devices a local gateway can actually reach. The phone shows a remote. The gateway sends the command through Home Assistant, or through a raw infrared service you configure. Buttons that an integration does not advertise stay unavailable, with a reason.
+A mobile-first remote for devices a local gateway can actually reach. The phone shows a remote built with Tailwind CSS, shadcn/ui, and Lucide icons. The gateway sends the command through Home Assistant, or through a raw infrared service you configure. Buttons that an integration does not advertise stay unavailable, with a reason.
 
 No television, air conditioner, or bridge has been lab-verified in this build. A preview device is labelled and never reports a real appliance success.
 
